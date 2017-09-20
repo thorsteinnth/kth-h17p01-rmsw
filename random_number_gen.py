@@ -9,4 +9,7 @@ minNumber = int(sys.argv[2])
 maxNumber = int(sys.argv[3])
 
 for x in range(numberCount):
-    print random.randint(minNumber, maxNumber)
+    if (x != numberCount-1):
+        print str(random.randint(minNumber, maxNumber))+",",
+    else:
+        print str(random.randint(minNumber, maxNumber)),

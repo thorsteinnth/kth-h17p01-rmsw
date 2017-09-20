@@ -3,6 +3,7 @@ import random
 
 if len(sys.argv) == 2 and sys.argv[1] == "help":
     print("Usage: python random_number_gen.py [number of random numbers desired] [min] [max]")
+    sys.exit(0)
 
 numberCount = int(sys.argv[1])
 minNumber = int(sys.argv[2])

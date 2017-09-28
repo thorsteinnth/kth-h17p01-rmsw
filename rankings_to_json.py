@@ -29,13 +29,19 @@ if (limitNumberOfLines and maxLinesPerFile < 10000):
 
 if (limitNumberOfLines):
 	print str("Limiting number of lines per output file to " + str(maxLinesPerFile))
-	print str("Output files will be called " + outputFilePath + "_XXX")
+	print str("Output files will be called " + outputFilePath + " + a counter as a suffix")
 
 # Methods
 
 def getOutputFileName(path, suffix):
 	if (suffix != ""):
-		return path + "_" + suffix
+		# Need to add a suffix
+		# Have to handle if the path has a file extension, the suffix should come before the file extension
+		filename, file_extension = os.path.splitext(path)
+		if (file_extension != ""):
+			return filename + "_" + suffix + file_extension
+		else:
+			return path + "_" + suffix
 	else:
 		return path
 

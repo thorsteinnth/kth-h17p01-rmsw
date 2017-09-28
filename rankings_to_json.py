@@ -4,8 +4,16 @@ import os
 # The data is of the form: pageUrl,pageRank,avgDuration
 # Example: jdprdgnhwrygvizhwxttnprtftlqpncrssviaphxiqmjpkizjwdgxi,6040,8
 
+def getHelpText():
+	return "Usage: python XXX.py [inputfilepath] [outputfilepath] [maxlines (0 to turn off)] [use couch import format (true/false)]"
+
+if len(sys.argv) == 2:
+	if str(sys.argv[1]) == "help":
+		print(getHelpText())
+		sys.exit(0)
+
 if len(sys.argv) != 5:
-    print("Usage: python XXX.py [inputfilepath] [outputfilepath] [maxlines (0 to turn off)] [use couch import format (true/false)]")
+    print(getHelpText())
     sys.exit(0)
 
 # Argument parsing

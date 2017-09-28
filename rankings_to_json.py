@@ -1,18 +1,21 @@
 import sys
 import os
 
-# The data is of the form: pageUrl,pageRank,avgDuration
+# The rankings data is of the form: pageUrl,pageRank,avgDuration
 # Example: jdprdgnhwrygvizhwxttnprtftlqpncrssviaphxiqmjpkizjwdgxi,6040,8
 
+# The uservisits data is of the form: sourceIP, destUrl, visitDate, adRevenue, userAgent, countryCode, languageCode, searchWord, duration
+# Example: 21.55.20.121,eqimjsndrccgvhrfemiwagdmwzsihdrevgzoupwvescaywpxssnrebppkvpxrvy,1976-04-16,0.46327674,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1),ESP,ESP-CA,drinking,10
+
 def getHelpText():
-	return "Usage: python XXX.py [inputfilepath] [outputfilepath] [maxlines (0 to turn off)] [use couch import format (true/false)]"
+	return "Usage: python XXX.py [inputfilepath] [outputfilepath] [data format (rankings/uservisits)] [maxlines (0 to turn off)] [use couch import format (true/false)]"
 
 if len(sys.argv) == 2:
 	if str(sys.argv[1]) == "help":
 		print(getHelpText())
 		sys.exit(0)
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     print(getHelpText())
     sys.exit(0)
 
@@ -20,13 +23,21 @@ if len(sys.argv) != 5:
 
 inputFilePath = str(sys.argv[1])
 outputFilePath = str(sys.argv[2])
-maxLinesPerFile = int(sys.argv[3])
+dataformat = str(sys.argv[3])
+
+if not (dataformat == "rankings" or dataformat == "uservisits"):
+	print("Data format parameter should be \"rankings\" or \"uservisits\"")
+	sys.exit(0)
+
+print("Parsing " + dataformat)
+
+maxLinesPerFile = int(sys.argv[4])
 
 limitNumberOfLines = False
 if (maxLinesPerFile > 0):
 	limitNumberOfLines = True
 
-useCouchImportFormat = str(sys.argv[4]) == "true"
+useCouchImportFormat = str(sys.argv[5]) == "true"
 
 if (useCouchImportFormat):
 	print "Using CouchDB import format"
@@ -69,6 +80,17 @@ def closeOutputFile(file):
 		file.write("\n]\n}")
 	file.close()
 
+def formatLine(line):
+	# Use rstrip() to remove the newline
+	splitLine = line.rstrip().split(",")
+	if (dataformat == "rankings"):
+		return "{{ \"pageUrl\":\"{}\", \"pageRank\":\"{}\", \"avgDuration\":\"{}\" }}".format(splitLine[0], splitLine[1], splitLine[2])
+	elif (dataformat == "uservisits"):
+		return "{{ \"sourceIP\":\"{}\", \"destUrl\":\"{}\", \"visitDate\":\"{}\", \"adRevenue\":\"{}\", \"userAgent\":\"{}\", \"countryCode\":\"{}\", \"languageCode\":\"{}\", \"searchWord\":\"{}\", \"duration\":\"{}\" }}".format(splitLine[0], splitLine[1], splitLine[2], splitLine[3], splitLine[4], splitLine[5], splitLine[6], splitLine[7], splitLine[8])
+	else:
+		print("Unknown data format: " + dataformat)
+		sys.exit(1)
+
 # Processing
 
 inputFile = open(inputFilePath, "r")
@@ -87,9 +109,7 @@ for line in inputFile:
 		closeOutputFile(outputFile)		
 		outputFile = openOutputFile(outputFilePath, str(outputFileCount))
 
-	# Use rstrip() to remove the newline
-	splitLine = line.rstrip().split(",")
-	formattedOutput = "{{ \"pageUrl\":\"{}\", \"pageRank\":\"{}\", \"avgDuration\":\"{}\" }}".format(splitLine[0], splitLine[1], splitLine[2])
+	formattedOutput = formatLine(line)
 	
 	if (useCouchImportFormat):
 		outputFile.write(str(formattedOutput) + ",\n")

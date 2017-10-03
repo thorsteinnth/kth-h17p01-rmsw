@@ -78,6 +78,7 @@ def closeOutputFile(file):
 		file.seek(-2, os.SEEK_END)
 		file.truncate()
 		file.write("\n]\n}")
+	print("Closing output file: " + str(file))
 	file.close()
 
 def formatLine(line):

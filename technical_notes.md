@@ -32,3 +32,6 @@ Connect externally (have to ctrl-c first to get out of the admin stuff)
 
 `docker run -it --rm --link some-mongo:mongo mongo mongo -u jsmith -p some-initial-password --authenticationDatabase admin some-mongo/some-db`
 
+### Import data to mongo via script
+
+`python mongo_import_files_in_folder.py /Users/tts/Google\ Drive/School/MSc/KTH/H17P01/Research\ Methodology\ and\ Scientific\ Writing/Project/data/mongo_local/rankings some-db rankings 32768 true`

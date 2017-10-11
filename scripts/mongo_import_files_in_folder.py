@@ -22,15 +22,20 @@ dropCollection = str(sys.argv[5]) == "true"
 
 # https://docs.mongodb.com/manual/tutorial/write-scripts-for-the-mongo-shell/#scripting
 
+# Hardcoded authentication stuff
+username = "jsmith"
+password = "some-initial-password"
+authenticationDatabase = "admin"
+
 if dropCollection:
 	# Lets drop the collection before importing
 	# mongo <dbname> --eval 'db.<collection>.drop()'
 	print("Current collections:")
-	call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db.getCollectionNames()"])
+	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db.getCollectionNames()"])
 	print("Dropping collection " + collection)
-	call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db." + collection + ".drop()"])
+	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db." + collection + ".drop()"])
 	print("Current collections after delete:")
-	call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db.getCollectionNames()"])
+	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db.getCollectionNames()"])
 
 # Get the path to all the files in the directory
 files = [str(folderPath + "/" + f) for f in listdir(folderPath) if isfile(join(folderPath, f)) and f != ".DS_Store"]
@@ -40,10 +45,10 @@ files = [str(folderPath + "/" + f) for f in listdir(folderPath) if isfile(join(f
 for file in files:
 	# NOTE: Can add parameter "--drop" here to to drop the collection before each import
 	print("Importing file: " + file)
-	call(["mongoimport", "--db", dbname, "--collection", collection, "--port", port, "--file", file])
+	call(["mongoimport", "--db", dbname, "--collection", collection, "--port", port, "--file", file, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase])
 
 # Print total number of items in collection
 print("Number of items in collection " + collection + ":")
-call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db." + collection + ".find().count()"])
+call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db." + collection + ".find().count()"])
 
 

@@ -34,6 +34,10 @@ Add initial admin user
 
 Connect externally (have to ctrl-c first to get out of the admin stuff)
 
+If the conainer isn't running:
+
+`docker start some-mongo`
+
 `docker run -it --rm --link some-mongo:mongo mongo mongo -u jsmith -p some-initial-password --authenticationDatabase admin some-mongo/some-db`
 
 ### Import data to mongo via script

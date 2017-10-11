@@ -11,7 +11,16 @@ def rangeQuery(rankings):
 	# The cursor that find() returns is probably lazy loaded, use count() to force load
 	rankings.find({ "pageRank" : { "$gt": "26" }}).count()
 
+# Hardcoded authentication stuff
+username = "jsmith"
+password = "some-initial-password"
+authenticationDatabase = "admin"
+
 client = MongoClient('localhost', 32768)
+
+authenticated = client['some-db'].authenticate(username, password, source=authenticationDatabase)
+print "Authenticated: " + str(authenticated)
+
 db = client['some-db']
 
 rankings = db.rankings

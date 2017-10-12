@@ -1,5 +1,19 @@
 # Technical notes
 
+## Data formatting
+
+**Script usage**
+
+`python XXX.py [inputfilepath] [outputfilepath] [data format (rankings/uservisits)][maxlines (0 to turn off)] [use couch import format (true/false)]`
+
+**Rankings for MongoDB**
+
+`python json_convert.py /Users/tts/Google\ Drive/School/MSc/KTH/H17P01/Research\ Methodology\ and\ Scientific\ Writing/Project/sample_data/part-00099_rankings /Users/tts/Desktop/rankings_json_mongo rankings 50000 false`
+
+**Uservisits for MongoDB**
+
+`python json_convert.py /Users/tts/Google\ Drive/School/MSc/KTH/H17P01/Research\ Methodology\ and\ Scientific\ Writing/Project/sample_data/part-01065_uservisits /Users/tts/Desktop/uservisits_json_mongo uservisits 50000 false`
+
 ## Docker
 
 ### Container and image management

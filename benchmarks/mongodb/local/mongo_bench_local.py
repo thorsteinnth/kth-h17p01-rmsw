@@ -20,7 +20,7 @@ def mapReduceTotalDurationPerDateQuery(uservisits):
 	reducer = Code("""
 		function(key, values) { return Array.sum( values ) }
 		""")
-	uservisits.map_reduce(mapper, reducer, "total_duration_per_date", True)
+	uservisits.map_reduce(mapper, reducer, "total_duration_per_date")
 
 # Hardcoded authentication stuff
 username = "jsmith"
@@ -43,6 +43,6 @@ print("Range query result:")
 pprint(rangeResult)
 
 print("Running MapReduce query...")
-mapReduceResult = Timer(partial(mapReduceTotalDurationPerDateQuery, uservisits)).repeat(1, 1)
+mapReduceResult = Timer(partial(mapReduceTotalDurationPerDateQuery, uservisits)).repeat(10, 1)
 print("MapReduce query result:")
 pprint(mapReduceResult)

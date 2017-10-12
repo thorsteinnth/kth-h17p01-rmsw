@@ -56,7 +56,13 @@ If the conainer isn't running:
 
 ### Import data to mongo via script
 
+**Rankings**
+
 `python mongo_import_files_in_folder.py /Users/tts/Google\ Drive/School/MSc/KTH/H17P01/Research\ Methodology\ and\ Scientific\ Writing/Project/data/mongo_local/rankings some-db rankings 32768 true`
+
+**Uservisits**
+
+`python mongo_import_files_in_folder.py /Users/tts/Google\ Drive/School/MSc/KTH/H17P01/Research\ Methodology\ and\ Scientific\ Writing/Project/data/mongo_local/uservisits some-db uservisits 32768 true`
 
 *Note: The container needs to have an access URL and port set, at least on the mac, so you can forward from a port on your machine into the docker container's VM. Can set that manually using Kitematic, or use the -p parameter in the first run command you use to start the container.*
 

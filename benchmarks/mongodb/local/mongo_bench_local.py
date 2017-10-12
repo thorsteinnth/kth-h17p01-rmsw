@@ -99,16 +99,3 @@ print("Running workload simulation...")
 workloadResults = Timer(partial(workloadSimulation, db)).repeat(10, 1)
 print("Workload simulation result")
 pprint(workloadResults)
-
-
-
-
-
-
-
-
-
-
-
-
-

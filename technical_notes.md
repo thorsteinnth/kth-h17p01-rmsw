@@ -72,3 +72,7 @@ List all collections:
 
 `db.getCollectionNames()`
 
+Mongostat:
+
+`mongostat -h localhost:32768 --username jsmith --password some-initial-password --authenticationDatabase admin`
+

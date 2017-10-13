@@ -123,7 +123,7 @@ if(benchmark == "mapreduce"):
 
 if (benchmark == "workload"):
 	opResults = []
-	saveOpResults = True
+	saveOpResults = False
 	workloadResults = Timer(partial(workloadSimulation, 
 		[db, opResults, saveOpResults])).repeat(10, 1)
 	

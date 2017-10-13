@@ -30,24 +30,32 @@ def mapReduceTotalDurationPerDateQuery(uservisits):
 		""")
 	uservisits.map_reduce(mapper, reducer, "total_duration_per_date")
 
-def workloadSimulation(mongoClient):
+def workloadSimulation(params):
+	db = params[0]
+	resultList = params[1]
+	saveResult = params[2]
 	threadCount = 200
 	pool = ThreadPool(threadCount)
 	workloadInput = []
 	for i in range (0, threadCount):
-		workloadInput.append([mongoClient, i])
+		workloadInput.append([db, i, resultList, saveResult])
 	return pool.map(workloadInstance, workloadInput)
 
 def workloadInstance(params):
-	client = params[0]
+	db = params[0]
 	threadId = params[1]
+	resultList = params[2]
+	saveResult = params[3]
 	# Let's make half of the threads do a read operation, and half do an update operation
+	# Note: List.append is thread safe
 	if threadId % 2 == 0:
-		#print "MY ID IS: " + str(threadId) + " and my read result is " + str(workflowReadOp(db.rankings))
-		workflowReadOp(db.rankings)
+		result = workflowReadOp(db.rankings)
+		if (saveResult):
+			resultList.append([threadId, "read", str(result)])
 	else:
-		#print "MY ID IS: " + str(threadId) + " and my update result is " + str(workflowUpdateOp(db.rankings))
-		workflowUpdateOp(db.rankings)
+		result = workflowUpdateOp(db.rankings)
+		if (saveResult):
+			resultList.append([threadId, "update", str(result.raw_result)])
 
 def workflowReadOp(rankings):
 	randomRank = random.randint(100,500)
@@ -56,7 +64,7 @@ def workflowReadOp(rankings):
 def workflowUpdateOp(rankings):
 	randomRank1 = random.randint(100,500)
 	randomRank2 = random.randint(100,500)
-	return rankings.update(
+	return rankings.update_one(
 		{ "pageRank" : randomRank1 },
 		{
 			"$set": {
@@ -115,6 +123,15 @@ if (benchmark == "mapreduce"):
 
 if (benchmark == "workload"):
 	print("Running workload simulation...")
-	workloadResults = Timer(partial(workloadSimulation, db)).repeat(10, 1)
+	opResults = []
+	saveOpResults = False
+	workloadResults = Timer(partial(workloadSimulation, [db, opResults, saveOpResults])).repeat(10, 1)
+	if saveOpResults:
+		print("Operation results")
+		readOps = [t for t in opResults if t[1] == "read"]
+		updateOps = [t for t in opResults if t[1] == "update"]
+		print("Read operations: " + str(len(readOps)))
+		print("Update operations: " + str(len(updateOps)))
 	print("Workload simulation result")
 	pprint(workloadResults)
+

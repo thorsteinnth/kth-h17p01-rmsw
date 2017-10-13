@@ -1,3 +1,4 @@
+import sys
 import pymongo
 import pprint 
 import timeit
@@ -10,6 +11,9 @@ from bson.code import Code
 from multiprocessing.dummy import Pool as ThreadPool
 
 # Functions
+
+def getHelpText():
+	return "Usage: python XXX.py [benchmark (range/mapreduce/workload)]"
 
 def rangeQuery(rankings):
 	# SELECT pageURL, pageRank FROM rankings WHERE pageRank > X
@@ -64,6 +68,18 @@ def workflowUpdateOp(rankings):
 	
 # Main
 
+# Input parsing
+
+if len(sys.argv) != 2:
+    print(getHelpText())
+    sys.exit(1)
+
+benchmark = str(sys.argv[1])
+
+if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "workload"):
+	print(getHelpText())
+	sys.exit(1)
+
 # Hardcoded authentication stuff
 username = "jsmith"
 password = "some-initial-password"
@@ -81,21 +97,24 @@ uservisits = db.uservisits
 
 # Range query
 
-print("Running range query...")
-rangeResult = Timer(partial(rangeQuery, rankings)).repeat(10, 1)
-print("Range query result:")
-pprint(rangeResult)
+if (benchmark == "range"):
+	print("Running range query...")
+	rangeResult = Timer(partial(rangeQuery, rankings)).repeat(10, 1)
+	print("Range query result:")
+	pprint(rangeResult)
 
 # MapReduce query
 
-print("Running MapReduce query...")
-mapReduceResult = Timer(partial(mapReduceTotalDurationPerDateQuery, uservisits)).repeat(10, 1)
-print("MapReduce query result:")
-pprint(mapReduceResult)
+if (benchmark == "mapreduce"):
+	print("Running MapReduce query...")
+	mapReduceResult = Timer(partial(mapReduceTotalDurationPerDateQuery, uservisits)).repeat(10, 1)
+	print("MapReduce query result:")
+	pprint(mapReduceResult)
 
 # Workload simulation
 
-print("Running workload simulation...")
-workloadResults = Timer(partial(workloadSimulation, db)).repeat(10, 1)
-print("Workload simulation result")
-pprint(workloadResults)
+if (benchmark == "workload"):
+	print("Running workload simulation...")
+	workloadResults = Timer(partial(workloadSimulation, db)).repeat(10, 1)
+	print("Workload simulation result")
+	pprint(workloadResults)

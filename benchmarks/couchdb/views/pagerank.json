@@ -1,0 +1,23 @@
+{
+  "_id": "_design/benchmarks",
+  "views": {
+    "pagerank": {
+      "map": "function(doc) { if(doc.pageRank) { emit(doc.pageRank, doc); } }"
+      },
+    "pagerankfast": {
+      "map": "function(doc) { if(doc.pageRank) { emit(doc.pageRank, null); } }"
+      },
+    "pagerankcount": {
+      "map": "function(doc) { if(doc.pageRank) { emit(doc.pageRank, doc); } }",
+      "reduce": "_count"
+      },
+    "totalduration": {
+      "map": "function(doc) { if(doc.visitDate) { emit(doc.visitDate, doc.duration); } }",
+      "reduce": "_sum"
+    },
+    "totaldurationslow": {
+      "map": "function(doc) { if(doc.visitDate) { emit(doc.visitDate, doc.duration); } }",
+      "reduce": "function(keys, values) { return sum(values); }"
+    }
+  }
+}

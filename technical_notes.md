@@ -16,6 +16,12 @@
 
 ## Docker
 
+###Misc
+
+Open container shell:
+
+`docker exec -i -t [container name] /bin/bash`
+
 ### Container and image management
 
 Stop and remove all containers:

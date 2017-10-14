@@ -1,0 +1,96 @@
+
+Set up (local) mongo cluster using Docker
+
+----------------------------------------
+
+Config server:
+
+Start config server container:
+This command creates and starts mongo container, then runs the mongod command setting it up as a config server under the replica set "myReplicaSet"
+(Note: Need to start the container (i.e. the mongo service in the container) as a config server from the get go, can't start a normal container and then specify it as a config server)
+
+docker run --name configserver-mongo -p 32900:27017 -d mongo mongod --configsvr --replSet myReplicaSet
+
+The mongod service will listen to connections on 27019 (not the default 27017)
+
+Open a shell into the container:
+Could also do this from somewhere else, but then I would need to map a port on the mac to the 27019 port in the container explicitly
+
+docker exec -i -t configserver-mongo /bin/bash
+
+Open a mongo shell (on port 27019)
+mongo --port 27019
+
+Initiate replica set:
+Note that we only have one config server in the replica set
+
+rs.initiate({ _id: "myReplicaSet", configsvr: true, members: [ { _id : 0, host : "localhost:27019" } ] })
+
+----------------------------------------
+
+Shard servers:
+
+Start shard server container:
+docker run --name shard1-mongo -p 32901:27017 -d mongo mongod --shardsvr --replSet myReplicaSet
+
+The shard server is listening for connections on 27018
+
+Connect to the container and start a mongo shell
+(could also map the 27018 port to a port on my mac and connect from there)
+
+docker exec -i -t shard1-mongo /bin/bash
+mongo --port 27018
+
+Initiate replica set:
+Note that we only have one shard server in the replica set
+
+rs.initiate({ _id : "myReplicaSet", members: [ { _id : 0, host : "localhost:27018" } ]})
+
+Can do rs.status() to check the status of the replica set and find the primary (should be this node since there is only one member in the set)
+
+Connect to the primary
+(should already be connected to it since there is only one primary)
+
+----------------------------------------
+
+mongos server:
+
+Start mongos server container, and run mongos on it, pointing it to the config server:
+Have to link the two containers together as well
+
+NOTE: NOT WORKING - NEED TO CREATE A USED DEFINED NETWORK INSTEAD
+docker run --name mongosserver-mongo -p 32902:27017 --link configserver-mongo:mongo -d mongo mongos --configdb myReplicaSet/localhost:27019
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

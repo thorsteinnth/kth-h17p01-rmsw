@@ -3,15 +3,21 @@ Set up (local) mongo cluster using Docker
 
 ----------------------------------------
 
+Start by creating a network
+docker network create mongonetwork
+
+----------------------------------------
+
 Config server:
 
 Start config server container:
 This command creates and starts mongo container, then runs the mongod command setting it up as a config server under the replica set "myReplicaSet"
 (Note: Need to start the container (i.e. the mongo service in the container) as a config server from the get go, can't start a normal container and then specify it as a config server)
 
-docker run --name configserver-mongo -p 32900:27017 -d mongo mongod --configsvr --replSet myReplicaSet
+docker run --name configserver-mongo -p 32900:27019 --network mongonetwork -d mongo mongod --configsvr --replSet myReplicaSet
 
-The mongod service will listen to connections on 27019 (not the default 27017)
+NOTE:
+The mongod service will listen to connections on 27019 when running in config server mode (not the default 27017) by default
 
 Open a shell into the container:
 Could also do this from somewhere else, but then I would need to map a port on the mac to the 27019 port in the container explicitly
@@ -26,14 +32,20 @@ Note that we only have one config server in the replica set
 
 rs.initiate({ _id: "myReplicaSet", configsvr: true, members: [ { _id : 0, host : "localhost:27019" } ] })
 
+rs.status()
+
+Or open a local (on my machine) mongo shell and do the same:
+mongo --port 32900
+
 ----------------------------------------
 
 Shard servers:
 
 Start shard server container:
-docker run --name shard1-mongo -p 32901:27017 -d mongo mongod --shardsvr --replSet myReplicaSet
+docker run --name shard1-mongo -p 32901:27018 --network mongonetwork -d mongo mongod --shardsvr --replSet myReplicaSet
 
-The shard server is listening for connections on 27018
+NOTE:
+The shard server is listening for connections on 27018 by default (when running mongod in shard server mode)
 
 Connect to the container and start a mongo shell
 (could also map the 27018 port to a port on my mac and connect from there)
@@ -55,13 +67,27 @@ Connect to the primary
 
 mongos server:
 
-Start mongos server container, and run mongos on it, pointing it to the config server:
-Have to link the two containers together as well
+Start mongos server container, and run mongos on it, pointing it to the config server
+Also have to link it to the user defined network to allow it to talk to the config server
+Find the IP address of the config server using docker network inspect, or just use the container name
 
-NOTE: NOT WORKING - NEED TO CREATE A USED DEFINED NETWORK INSTEAD
-docker run --name mongosserver-mongo -p 32902:27017 --link configserver-mongo:mongo -d mongo mongos --configdb myReplicaSet/localhost:27019
+docker run --name mongosserver-mongo -p 32902:27017 --network mongonetwork -d mongo mongos --configdb myReplicaSet/172.18.0.2:27019
 
+----------------------------------------
 
+Network stuff
+
+Create docker user defined network to allow containers to talk to each other (bridge network (single host) by default):
+docker network create mongonetwork
+
+Connect containers we have created already to the network:
+NOTE: Can also specify a network using the --network flag in the docker run command when creating the containers
+
+docker network connect mongonetwork configserver-mongo
+docker network connect mongonetwork shard1-mongo
+
+Can inspect the network, see that the containers were added and what their IP addresses are
+docker network inspect mongonetwork
 
 
 

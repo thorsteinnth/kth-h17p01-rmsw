@@ -101,6 +101,7 @@ def formatLine(line):
 		sys.exit(1)
 
 def processInputFile(inputFilePath, initialOutputFileCounter):
+	print("Processing input file: " + inputFilePath + " ...")
 	inputFile = open(inputFilePath, "r")
 
 	lineCount = 0

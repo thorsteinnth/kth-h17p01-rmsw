@@ -1,0 +1,28 @@
+
+Set up docker machines on Digital Ocean, have to get the docker images first:
+
+docker pull mongo
+
+Set up config server:
+
+docker run --name configserver-mongo -p 32000:27017 -d mongo mongod --configsvr --port 27017 --replSet configServerReplicaSet
+docker exec -i -t configserver-mongo /bin/bash
+mongo --port 32000
+rs.initiate({ _id: "configServerReplicaSet", configsvr: true, members: [ { _id : 0, host : "localhost:27017" } ] })
+rs.status()
+
+NOTE: Just one server in the replica set, i.e. no replication
+
+Set up shard server(s):
+
+docker run --name shard1-mongo -p 32001:27017 -d mongo mongod --shardsvr --port 27017 --replSet shard1ReplicaSet
+docker exec -i -t shard1-mongo /bin/bash
+mongo --port 32001
+rs.initiate({ _id : "shard1ReplicaSet", members: [ { _id : 0, host : "localhost:27017" } ]})
+rs.status()
+
+Set up mongos server (router):
+
+NOTE: Have to point it at the config server
+
+docker run --name mongosserver-mongo -p 32002:27017 -d mongo mongos --configdb configServerReplicaSet/188.226.149.230:32000

@@ -1,5 +1,7 @@
 import sys
 import os
+from os import listdir
+from os.path import isfile, isdir, join
 
 # The rankings data is of the form: pageUrl,pageRank,avgDuration
 # Example: jdprdgnhwrygvizhwxttnprtftlqpncrssviaphxiqmjpkizjwdgxi,6040,8
@@ -8,7 +10,7 @@ import os
 # Example: 21.55.20.121,eqimjsndrccgvhrfemiwagdmwzsihdrevgzoupwvescaywpxssnrebppkvpxrvy,1976-04-16,0.46327674,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1),ESP,ESP-CA,drinking,10
 
 def getHelpText():
-	return "Usage: python XXX.py [inputfilepath] [outputfilepath] [data format (rankings/uservisits)] [maxlines (0 to turn off)] [use couch import format (true/false)]"
+	return "Usage: python XXX.py [input file or folder path] [outputfilepath] [data format (rankings/uservisits)] [maxlines (0 to turn off)] [use couch import format (true/false)]"
 
 if len(sys.argv) == 2:
 	if str(sys.argv[1]) == "help":
@@ -21,7 +23,13 @@ if len(sys.argv) != 6:
 
 # Argument parsing
 
-inputFilePath = str(sys.argv[1])
+inputPath = str(sys.argv[1])
+
+inputPathIsFolder = isdir(inputPath)
+
+if inputPathIsFolder:
+	print("Input path is folder, will import all files under that folder")
+
 outputFilePath = str(sys.argv[2])
 dataformat = str(sys.argv[3])
 
@@ -92,34 +100,53 @@ def formatLine(line):
 		print("Unknown data format: " + dataformat)
 		sys.exit(1)
 
+def processInputFile(inputFilePath, initialOutputFileCounter):
+	inputFile = open(inputFilePath, "r")
+
+	lineCount = 0
+	outputFileCount = initialOutputFileCounter
+
+	outputFile = openOutputFile(outputFilePath, str(outputFileCount) if limitNumberOfLines else "")
+
+	for line in inputFile:
+
+		if (limitNumberOfLines and lineCount == maxLinesPerFile):
+			# Close the current file and open a new one
+			lineCount = 0
+			outputFileCount = outputFileCount + 1
+			closeOutputFile(outputFile)		
+			outputFile = openOutputFile(outputFilePath, str(outputFileCount))
+
+		formattedOutput = formatLine(line)
+		
+		if (useCouchImportFormat):
+			outputFile.write(str(formattedOutput) + ",\n")
+		else:
+			outputFile.write(str(formattedOutput) + "\n")
+		
+		lineCount = lineCount+1
+
+	closeOutputFile(outputFile)
+
+	return outputFileCount
+
 # Processing
 
-inputFile = open(inputFilePath, "r")
-
-lineCount = 0
-outputFileCount = 0
-
-outputFile = openOutputFile(outputFilePath, str(outputFileCount) if limitNumberOfLines else "")
-
-for line in inputFile:
-
-	if (limitNumberOfLines and lineCount == maxLinesPerFile):
-		# Close the current file and open a new one
-		lineCount = 0
-		outputFileCount = outputFileCount + 1
-		closeOutputFile(outputFile)		
-		outputFile = openOutputFile(outputFilePath, str(outputFileCount))
-
-	formattedOutput = formatLine(line)
-	
-	if (useCouchImportFormat):
-		outputFile.write(str(formattedOutput) + ",\n")
-	else:
-		outputFile.write(str(formattedOutput) + "\n")
-	
-	lineCount = lineCount+1
-
-closeOutputFile(outputFile)
+# Note: The output file counter is zero based
+if not inputPathIsFolder:
+	outputFileCounter = 0
+	outputFileCounter = processInputFile(inputPath, outputFileCounter)
+	print(str(outputFileCounter + 1) + " output files generated")
+else:
+	# This is a folder, let's process all files in the folder
+	# Get the path to all the files in the directory
+	inputFiles = [str(inputPath + "/" + f) for f in listdir(inputPath) if isfile(join(inputPath, f)) and f != ".DS_Store" and not f.startswith("Icon")]
+	print("Processing " + str(len(inputFiles)) + " input files ...")
+	outputFileCounter = 0
+	for inputFile in inputFiles:
+		outputFileCounter = processInputFile(inputFile, outputFileCounter)
+		outputFileCounter = outputFileCounter + 1
+	print(str(outputFileCounter) + " output files generated")
 
 
 

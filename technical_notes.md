@@ -86,3 +86,11 @@ Mongostat:
 
 `mongostat -h localhost:32768 --username jsmith --password some-initial-password --authenticationDatabase admin`
 
+Get shard distribution for a collection:
+
+`db.[collection].getShardDistribution()`
+
+Get cluster status:
+
+`sh.status()`
+

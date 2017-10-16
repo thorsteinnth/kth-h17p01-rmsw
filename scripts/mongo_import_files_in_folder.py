@@ -4,11 +4,11 @@ from os.path import isfile, join
 from subprocess import call
 
 def getHelpText():
-	return "Usage: python XXX.py [folder] [dbname] [collection] [port] [drop collection before import (true/false)]"
+	return "Usage: python XXX.py [folder] [dbname] [collection] [port] [drop collection before import (true/false)] [use authentication (true/false)]"
 
 # Input parameter parsing
 
-if len(sys.argv) != 6:
+if len(sys.argv) != 7:
     print(getHelpText())
     sys.exit(0)
 
@@ -17,6 +17,7 @@ dbname = str(sys.argv[2])
 collection = str(sys.argv[3])
 port = str(sys.argv[4])
 dropCollection = str(sys.argv[5]) == "true"
+useAuthentication = str(sys.argv[6]) == "true"
 
 # Import stuff
 
@@ -31,11 +32,20 @@ if dropCollection:
 	# Lets drop the collection before importing
 	# mongo <dbname> --eval 'db.<collection>.drop()'
 	print("Current collections:")
-	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db.getCollectionNames()"])
+	if useAuthentication:
+		call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db.getCollectionNames()"])
+	else:
+		call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db.getCollectionNames()"])
 	print("Dropping collection " + collection)
-	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db." + collection + ".drop()"])
+	if useAuthentication:
+		call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db." + collection + ".drop()"])
+	else:
+		call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db." + collection + ".drop()"])
 	print("Current collections after delete:")
-	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db.getCollectionNames()"])
+	if useAuthentication:
+		call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db.getCollectionNames()"])
+	else:
+		call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db.getCollectionNames()"])
 
 # Get the path to all the files in the directory
 files = [str(folderPath + "/" + f) for f in listdir(folderPath) if isfile(join(folderPath, f)) and f != ".DS_Store"]
@@ -45,10 +55,17 @@ files = [str(folderPath + "/" + f) for f in listdir(folderPath) if isfile(join(f
 for file in files:
 	# NOTE: Can add parameter "--drop" here to to drop the collection before each import
 	print("Importing file: " + file)
-	call(["mongoimport", "--db", dbname, "--collection", collection, "--port", port, "--file", file, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase])
+	if useAuthentication:
+		call(["mongoimport", "--db", dbname, "--collection", collection, "--port", port, "--file", file, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase])
+	else:
+		call(["mongoimport", "--db", dbname, "--collection", collection, "--port", port, "--file", file])
 
 # Print total number of items in collection
 print("Number of items in collection " + collection + ":")
-call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db." + collection + ".find().count()"])
+if useAuthentication:
+	call(["mongo", "localhost:" + port + "/" + dbname, "--username", username, "--password", password, "--authenticationDatabase", authenticationDatabase, "--eval", "db." + collection + ".find().count()"])
+else:
+	call(["mongo", "localhost:" + port + "/" + dbname, "--eval", "db." + collection + ".find().count()"])
+
 
 

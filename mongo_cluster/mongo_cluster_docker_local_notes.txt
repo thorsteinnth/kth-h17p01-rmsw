@@ -3,8 +3,24 @@ Set up (local) mongo cluster using Docker
 
 ----------------------------------------
 
-Start by creating a network
+Start by creating a network (when running locally, i.e. on a single docker machine)
 docker network create mongonetwork
+
+----------------------------------------
+
+Network stuff
+
+Create docker user defined network to allow containers to talk to each other (bridge network (single host) by default):
+docker network create mongonetwork
+
+Connect containers we have created already to the network:
+NOTE: Can also specify a network using the --network flag in the docker run command when creating the containers
+
+docker network connect mongonetwork configserver-mongo
+docker network connect mongonetwork shard1-mongo
+
+Can inspect the network, see that the containers were added and what their IP addresses are
+docker network inspect mongonetwork
 
 ----------------------------------------
 
@@ -62,6 +78,14 @@ rs.status()
 Connect to the primary
 (should already be connected to it since there is only one primary)
 
+And for the next shard server, and so on ...
+
+docker run --name shard2-mongo -p 32903:27017 --network mongonetwork -d mongo mongod --shardsvr --port 27017 --replSet shard2ReplicaSet
+docker exec -it shard2-mongo /bin/bash
+mongo --port 27017
+rs.initiate({ _id : "shard2ReplicaSet", members: [ { _id : 0, host : "shard2-mongo:27017" } ]})
+rs.status()
+
 ----------------------------------------
 
 mongos server:
@@ -80,58 +104,22 @@ mongo --port 27017
 Add shards to the cluster:
 Do this for all shards, until the cluster includes all shards
 sh.addShard("shard1ReplicaSet/shard1-mongo:27017")
+sh.addShard("shard2ReplicaSet/shard2-mongo:27017")
 
 Enable sharding for the database:
 sh.enableSharding("some-db")
 
 Shard a collection:
-Here we shard the rankings collection by the pageRank key, using ranged sharding in (I think) ascending order
+
+Here we shard the rankings collection by the pageRank key, using ranged sharding in (I think) ascending order.
+(Note: When running this the collection gets created. Can't drop the collection when importing data from files).
 sh.shardCollection("some-db.rankings", { "pageRank" : 1 } )
 
-----------------------------------------
+Here we shard the collection using hashed sharding on pageRank:
+sh.shardCollection("some-db.rankings", { "pageRank" : "hashed" } )
 
-Network stuff
-
-Create docker user defined network to allow containers to talk to each other (bridge network (single host) by default):
-docker network create mongonetwork
-
-Connect containers we have created already to the network:
-NOTE: Can also specify a network using the --network flag in the docker run command when creating the containers
-
-docker network connect mongonetwork configserver-mongo
-docker network connect mongonetwork shard1-mongo
-
-Can inspect the network, see that the containers were added and what their IP addresses are
-docker network inspect mongonetwork
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Here we shard the collection using hashed sharding on the document IDs:
+sh.shardCollection("some-db.rankings", { "_id" : "hashed" } )
 
 
 

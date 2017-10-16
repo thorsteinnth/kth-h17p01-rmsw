@@ -22,6 +22,10 @@ Open container shell:
 
 `docker exec -i -t [container name] /bin/bash`
 
+Install ping:
+
+`apt-get update && apt-get install iputils-ping`
+
 ### Container and image management
 
 Stop and remove all containers:

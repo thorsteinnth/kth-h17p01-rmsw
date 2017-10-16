@@ -72,6 +72,22 @@ Find the IP address of the config server using docker network inspect, or just u
 
 docker run --name mongosserver-mongo -p 32902:27017 --network mongonetwork -d mongo mongos --configdb configServerReplicaSet/configserver-mongo:27017
 
+Connect a mongo shell to the mongos server:
+(Can do that from the server itself or somewhere else)
+docker exec -it mongosserver-mongo /bin/bash
+mongo --port 27017
+
+Add shards to the cluster:
+Do this for all shards, until the cluster includes all shards
+sh.addShard("shard1ReplicaSet/shard1-mongo:27017")
+
+Enable sharding for the database:
+sh.enableSharding("some-db")
+
+Shard a collection:
+Here we shard the rankings collection by the pageRank key, using ranged sharding in (I think) ascending order
+sh.shardCollection("some-db.rankings", { "pageRank" : 1 } )
+
 ----------------------------------------
 
 Network stuff

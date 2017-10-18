@@ -46,11 +46,17 @@ Get the image if you don't have it already:
 
 `docker pull mongo`
 
+Start container with authentication:
+
 `docker run --name some-mongo -p 32768:27017 -d mongo --auth`
+
+or without authentication:
+
+`docker run --name some-mongo -p 32768:27017 -d mongo`
 
 (`docker ps`)
 
-Add initial admin user
+Add initial admin user (only needed if you have authentication on):
 
 `docker exec -it some-mongo mongo admin`
 
@@ -65,6 +71,10 @@ If the conainer isn't running:
 `docker start some-mongo`
 
 `docker run -it --rm --link some-mongo:mongo mongo mongo -u jsmith -p some-initial-password --authenticationDatabase admin some-mongo/some-db`
+
+or without authentication:
+
+`docker run -it --rm --link some-mongo:mongo mongo mongo some-mongo/some-db`
 
 ### Import data to mongo via script
 

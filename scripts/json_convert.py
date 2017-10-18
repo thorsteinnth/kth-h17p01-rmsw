@@ -129,6 +129,9 @@ def processInputFile(inputFilePath, initialOutputFileCounter):
 
 	closeOutputFile(outputFile)
 
+	print("Closing input file: " + str(inputFile))
+	inputFile.close()
+
 	return outputFileCount
 
 # Processing

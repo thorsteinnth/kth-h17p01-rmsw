@@ -18,7 +18,7 @@ You can also point the script to a single file instead of a folder. If it is a f
 
 ## Docker
 
-###Misc
+### Misc
 
 Open container shell:
 

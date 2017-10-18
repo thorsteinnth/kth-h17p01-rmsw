@@ -39,5 +39,5 @@ def format_part_number(input):
 print("Will get part numbers " + format_part_number(str(partnumber_from)) + " to " + format_part_number(str(partnumber_to)))
 
 for partnumber in range(int(partnumber_from), int(partnumber_to) + 1):
-	print("Getting part number " + format_part_number(str(partnumber)) + " ...")
+	print("Getting part number " + format_part_number(str(partnumber)) + " going up to " + format_part_number(str(partnumber_to)) + " ...")
 	call(["s3cmd", "get", "s3://big-data-benchmark/pavlo/text/5nodes/"+ data_type + "/part-" + format_part_number(str(partnumber)), local_save_path])

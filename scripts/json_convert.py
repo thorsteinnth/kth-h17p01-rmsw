@@ -10,14 +10,14 @@ from os.path import isfile, isdir, join
 # Example: 21.55.20.121,eqimjsndrccgvhrfemiwagdmwzsihdrevgzoupwvescaywpxssnrebppkvpxrvy,1976-04-16,0.46327674,Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1),ESP,ESP-CA,drinking,10
 
 def getHelpText():
-	return "Usage: python XXX.py [input file or folder path] [outputfilepath] [data format (rankings/uservisits)] [maxlines (0 to turn off)] [use couch import format (true/false)]"
+	return "Usage: python XXX.py [input file or folder path] [outputfilepath] [data format (rankings/uservisits)] [maxlines (0 to turn off)] [use couch import format (true/false)] [use mongo date object (true/false)]"
 
 if len(sys.argv) == 2:
 	if str(sys.argv[1]) == "help":
 		print(getHelpText())
 		sys.exit(0)
 
-if len(sys.argv) != 6:
+if len(sys.argv) != 7:
     print(getHelpText())
     sys.exit(0)
 
@@ -46,9 +46,13 @@ if (maxLinesPerFile > 0):
 	limitNumberOfLines = True
 
 useCouchImportFormat = str(sys.argv[5]) == "true"
+useMongoDateObject = str(sys.argv[6]) == "true"
 
 if (useCouchImportFormat):
 	print "Using CouchDB import format"
+
+if (useMongoDateObject):
+	print "Using MongoDB date object"
 	
 if (limitNumberOfLines and maxLinesPerFile < 10000):
 	print "You really shouldn't have max lines per file less than 10000 or something. You will create way to many files and freeze your system. Exiting ..."
@@ -95,7 +99,10 @@ def formatLine(line):
 	if (dataformat == "rankings"):
 		return "{{ \"pageUrl\":\"{}\", \"pageRank\":{}, \"avgDuration\":{} }}".format(splitLine[0], splitLine[1], splitLine[2])
 	elif (dataformat == "uservisits"):
-		return "{{ \"sourceIP\":\"{}\", \"destUrl\":\"{}\", \"visitDate\":\"{}\", \"adRevenue\":{}, \"userAgent\":\"{}\", \"countryCode\":\"{}\", \"languageCode\":\"{}\", \"searchWord\":\"{}\", \"duration\":{} }}".format(splitLine[0], splitLine[1], splitLine[2], splitLine[3], splitLine[4], splitLine[5], splitLine[6], splitLine[7], splitLine[8])
+		if useMongoDateObject:
+			return "{{ \"sourceIP\":\"{}\", \"destUrl\":\"{}\", \"visitDate\":{{$date:\"{}T00:00:00Z\"}}, \"adRevenue\":{}, \"userAgent\":\"{}\", \"countryCode\":\"{}\", \"languageCode\":\"{}\", \"searchWord\":\"{}\", \"duration\":{} }}".format(splitLine[0], splitLine[1], splitLine[2], splitLine[3], splitLine[4], splitLine[5], splitLine[6], splitLine[7], splitLine[8])
+		else:
+			return "{{ \"sourceIP\":\"{}\", \"destUrl\":\"{}\", \"visitDate\":\"{}\", \"adRevenue\":{}, \"userAgent\":\"{}\", \"countryCode\":\"{}\", \"languageCode\":\"{}\", \"searchWord\":\"{}\", \"duration\":{} }}".format(splitLine[0], splitLine[1], splitLine[2], splitLine[3], splitLine[4], splitLine[5], splitLine[6], splitLine[7], splitLine[8])
 	else:
 		print("Unknown data format: " + dataformat)
 		sys.exit(1)

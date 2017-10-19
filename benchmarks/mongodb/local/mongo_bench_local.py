@@ -28,7 +28,7 @@ def mapReduceTotalDurationPerDateQuery(uservisits):
 	reducer = Code("""
 		function(key, values) { return Array.sum( values ) }
 		""")
-	uservisits.map_reduce(mapper, reducer, "total_duration_per_date")
+	uservisits.map_reduce(mapper, reducer, "total_duration_per_date")#, sort={"visitDate": 1})
 
 def workloadSimulation(params):
 	db = params[0]

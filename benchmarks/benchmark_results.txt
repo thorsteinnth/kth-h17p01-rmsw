@@ -181,6 +181,21 @@ No improvement
  70.06156492233276,
  71.9105589389801]
 
+Running it again:
+
+Running MapReduce query...
+MapReduce query result:
+[69.20632815361023,
+ 69.5830888748169,
+ 66.55808591842651,
+ 64.9306218624115,
+ 66.87332892417908,
+ 65.97534704208374,
+ 71.45677304267883,
+ 70.00313091278076,
+ 67.77361392974854,
+ 70.5177800655365]
+
  MapReduce query with index db.uservisits.createIndex( { "visitDate": 1 } ) where visitDate is an ISODate and input documents for the mapper are sorted by visitDate ascending
  No improvement, worse actually
 

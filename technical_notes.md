@@ -106,3 +106,16 @@ Get cluster status:
 
 `sh.status()`
 
+Create index on pageRank field in rankings collection, ascending:
+
+`db.rankings.createIndex( { "pageRank": 1 } )`
+
+View indexes:
+
+`db.rankings.getIndexes()`
+
+Drop index (get the name from the getIndexes() operation):
+
+`db.rankings.dropIndex("pageRank_1")`
+
+

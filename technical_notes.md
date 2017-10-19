@@ -110,6 +110,14 @@ Create index on pageRank field in rankings collection, ascending:
 
 `db.rankings.createIndex( { "pageRank": 1 } )`
 
+Create index on visitDate field in uservisits collection, ascending:
+
+`db.uservisits.createIndex( { "visitDate": 1 } )`
+
+Create index on visitDate field in uservisits collection, text index:
+
+`db.uservisits.createIndex( { "visitDate": "text" } )`
+
 View indexes:
 
 `db.rankings.getIndexes()`

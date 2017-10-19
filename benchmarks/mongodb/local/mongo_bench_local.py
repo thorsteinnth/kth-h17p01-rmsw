@@ -13,7 +13,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 # Functions
 
 def getHelpText():
-	return "Usage: python XXX.py [benchmark (range/mapreduce/workload)] [use authentication (true/false)]"
+	return "Usage: python XXX.py [benchmark (range/mapreduce/aggregation/workload)] [use authentication (true/false)]"
 
 def rangeQuery(rankings):
 	# SELECT pageURL, pageRank FROM rankings WHERE pageRank > X
@@ -73,6 +73,9 @@ def workflowUpdateOp(rankings):
 
 		}
 	)
+
+def aggregationPipelineSum(uservisits):
+	uservisits.aggregate([ { "$group": { "_id": "$visitDate", "value": { "$sum": "$duration" }}}, { "$sort" : { "_id" : 1 }} ])
 	
 # Main
 
@@ -85,7 +88,7 @@ if len(sys.argv) != 3:
 benchmark = str(sys.argv[1])
 useAuthentication = str(sys.argv[2]) == "true"
 
-if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "workload"):
+if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "workload" or benchmark == "aggregation"):
 	print(getHelpText())
 	sys.exit(1)
 
@@ -122,6 +125,14 @@ if (benchmark == "mapreduce"):
 	mapReduceResult = Timer(partial(mapReduceTotalDurationPerDateQuery, uservisits)).repeat(10, 1)
 	print("MapReduce query result:")
 	pprint(mapReduceResult)
+
+# Aggregation pipeline query
+
+if (benchmark == "aggregation"):
+	print("Running aggregation pipeline query...")
+	aggregationResult = Timer(partial(aggregationPipelineSum, uservisits)).repeat(10, 1)
+	print("Aggregation pipeline query result:")
+	pprint(aggregationResult)
 
 # Workload simulation
 

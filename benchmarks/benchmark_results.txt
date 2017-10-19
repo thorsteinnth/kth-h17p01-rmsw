@@ -282,6 +282,21 @@ Aggregation pipeline query result:
  3.87021803855896,
  3.9836740493774414]
 
+Aggregation query with index db.uservisits.createIndex( { "visitDate": 1 } ) where visitDate is an ISODate and a sort operation on visitDate in the beginning of the pipeline
+
+ Running aggregation pipeline query...
+Aggregation pipeline query result:
+[49.5709490776062,
+ 50.58434700965881,
+ 49.50186085700989,
+ 50.891976833343506,
+ 51.471855878829956,
+ 52.00241804122925,
+ 53.01556992530823,
+ 52.68778085708618,
+ 51.12340688705444,
+ 51.047611951828]
+
 
 
 

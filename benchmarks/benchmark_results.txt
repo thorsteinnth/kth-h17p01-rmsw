@@ -133,6 +133,7 @@ Aggregation pipeline query result:
 MongoDB
 
 With index on rankings.pageRank, ascending
+db.rankings.createIndex( { "pageRank": 1 } )
 Range query only uses the rankings collection
 
  Range query result:
@@ -297,6 +298,38 @@ Aggregation pipeline query result:
  51.12340688705444,
  51.047611951828]
 
+ Mongo clustered, 4 shards, object ID hashed sharding
+ Using the 4 local benchmark data files
+
+Range, no indexes
+
+Running range query...
+Range query result:
+[1.9326059818267822,
+ 1.5485670566558838,
+ 1.6386370658874512,
+ 1.4911108016967773,
+ 1.5255699157714844,
+ 1.4796829223632812,
+ 1.2053661346435547,
+ 1.613887071609497,
+ 1.5623140335083008,
+ 1.1691429615020752]
+
+Range, index on pageRank, ascending
+
+Running range query...
+Range query result:
+[0.16536593437194824,
+ 0.028326034545898438,
+ 0.028738021850585938,
+ 0.028369903564453125,
+ 0.02845907211303711,
+ 0.027781963348388672,
+ 0.0281980037689209,
+ 0.029376983642578125,
+ 0.028470993041992188,
+ 0.028607845306396484]
 
 
 

@@ -298,8 +298,13 @@ Aggregation pipeline query result:
  51.12340688705444,
  51.047611951828]
 
- Mongo clustered, 4 shards, object ID hashed sharding
- Using the 4 local benchmark data files
+---------------------------------------------------------------------------
+
+Mongo clustered, 4 shards, object ID hashed sharding
+Using the 4 local benchmark data files (input part files 00099, 00098, 00097, 00096)
+Running the benchmark from my machine
+
+No indexes
 
 Range, no indexes
 
@@ -316,6 +321,21 @@ Range query result:
  1.5623140335083008,
  1.1691429615020752]
 
+Running it again
+
+Running range query...
+Range query result:
+[1.8331589698791504,
+ 0.8936021327972412,
+ 1.2979280948638916,
+ 1.186621904373169,
+ 0.7931110858917236,
+ 0.7749850749969482,
+ 0.7841289043426514,
+ 1.1015679836273193,
+ 1.4531030654907227,
+ 1.010516881942749]
+
 Range, index on pageRank, ascending
 
 Running range query...
@@ -331,13 +351,196 @@ Range query result:
  0.028470993041992188,
  0.028607845306396484]
 
+ Running it again
+
+ Running range query...
+Range query result:
+[0.1584320068359375,
+ 0.0321807861328125,
+ 0.02880692481994629,
+ 0.029143095016479492,
+ 0.02822399139404297,
+ 0.02805495262145996,
+ 0.028030872344970703,
+ 0.02853989601135254,
+ 0.02873396873474121,
+ 0.02859807014465332]
+
+---------------------------------------------------------------------------
+
+Mongo clustered, 4 shards, object ID hashed sharding
+Using the 4 local benchmark data files (input part files 00099, 00098, 00097, 00096)
+Running the benchmark from configserver/mongosrouter machine
+
+All benchmarks, no indexes
+
+Running range query...
+Range query result:
+[0.90482497215271,
+ 0.8943648338317871,
+ 0.832819938659668,
+ 1.4616990089416504,
+ 1.1206960678100586,
+ 1.064234972000122,
+ 1.2000668048858643,
+ 1.0689270496368408,
+ 1.0109140872955322,
+ 1.129741907119751]
+
+ Running it again
+
+ Running range query...
+Range query result:
+[1.124549150466919,
+ 1.0160679817199707,
+ 0.9423699378967285,
+ 0.9175879955291748,
+ 0.9733850955963135,
+ 0.9701910018920898,
+ 1.161984920501709,
+ 1.3066108226776123,
+ 0.9223499298095703,
+ 0.9027788639068604]
+
+Running MapReduce query...
+MapReduce query result:
+[60.133702993392944,
+ 58.989901065826416,
+ 55.59789514541626,
+ 52.3237681388855,
+ 57.27423310279846,
+ 52.75591707229614,
+ 52.801005125045776,
+ 55.46788191795349,
+ 62.49320101737976,
+ 55.004201889038086]
+
+ Running aggregation pipeline query...
+Aggregation pipeline query result:
+[5.095760107040405,
+ 4.754612922668457,
+ 5.052337169647217,
+ 5.105710029602051,
+ 5.001313924789429,
+ 5.444516181945801,
+ 5.518079042434692,
+ 4.398182153701782,
+ 4.68666410446167,
+ 4.839427947998047]
+
+
+ Running it again
+
+ Aggregation pipeline query result:
+[3.8881309032440186,
+ 4.688041925430298,
+ 5.456641912460327,
+ 5.028269052505493,
+ 5.29137396812439,
+ 4.5009989738464355,
+ 4.18333101272583,
+ 4.617753982543945,
+ 4.785188913345337,
+ 4.896203994750977]
+
+
+With indexes
+
+ Range, with index on pageRank, ascending
+ db.rankings.createIndex( { "pageRank": 1 } )
+
+ Running range query...
+Range query result:
+[0.004542827606201172,
+ 0.0014278888702392578,
+ 0.001180887222290039,
+ 0.0013380050659179688,
+ 0.0013790130615234375,
+ 0.0016109943389892578,
+ 0.00138092041015625,
+ 0.0013298988342285156,
+ 0.0016660690307617188,
+ 0.0012819766998291016]
+
+ Running it again
+
+Running range query...
+Range query result:
+[0.003276824951171875,
+ 0.0030651092529296875,
+ 0.0033991336822509766,
+ 0.0016620159149169922,
+ 0.0015668869018554688,
+ 0.001644134521484375,
+ 0.001470804214477539,
+ 0.0013802051544189453,
+ 0.0017800331115722656,
+ 0.0015521049499511719] 
 
 
 
 
 
+Mongo - local files (4 input files) shard distribution
 
 
+mongos> db.rankings.getShardDistribution()
+
+Shard shard1ReplicaSet at shard1ReplicaSet/188.226.173.163:27018
+ data : 143.37MiB docs : 1232169 chunks : 22
+ estimated data per chunk : 6.51MiB
+ estimated docs per chunk : 56007
+
+Shard shard2ReplicaSet at shard2ReplicaSet/188.226.171.167:27018
+ data : 82.1MiB docs : 705736 chunks : 21
+ estimated data per chunk : 3.9MiB
+ estimated docs per chunk : 33606
+
+Shard shard3ReplicaSet at shard3ReplicaSet/188.226.172.31:27018
+ data : 85.1MiB docs : 731664 chunks : 21
+ estimated data per chunk : 4.05MiB
+ estimated docs per chunk : 34841
+
+Shard shard4ReplicaSet at shard4ReplicaSet/188.226.172.84:27018
+ data : 108.26MiB docs : 930431 chunks : 21
+ estimated data per chunk : 5.15MiB
+ estimated docs per chunk : 44306
+
+Totals
+ data : 418.84MiB docs : 3600000 chunks : 85
+ Shard shard1ReplicaSet contains 34.23% data, 34.22% docs in cluster, avg obj size on shard : 122B
+ Shard shard2ReplicaSet contains 19.6% data, 19.6% docs in cluster, avg obj size on shard : 121B
+ Shard shard3ReplicaSet contains 20.31% data, 20.32% docs in cluster, avg obj size on shard : 121B
+ Shard shard4ReplicaSet contains 25.84% data, 25.84% docs in cluster, avg obj size on shard : 122B
+
+mongos> db.uservisits.getShardDistribution()
+
+Shard shard1ReplicaSet at shard1ReplicaSet/188.226.173.163:27018
+ data : 182.19MiB docs : 611703 chunks : 5
+ estimated data per chunk : 36.43MiB
+ estimated docs per chunk : 122340
+
+Shard shard2ReplicaSet at shard2ReplicaSet/188.226.171.167:27018
+ data : 184.5MiB docs : 619406 chunks : 7
+ estimated data per chunk : 26.35MiB
+ estimated docs per chunk : 88486
+
+Shard shard3ReplicaSet at shard3ReplicaSet/188.226.172.31:27018
+ data : 137.99MiB docs : 463384 chunks : 5
+ estimated data per chunk : 27.59MiB
+ estimated docs per chunk : 92676
+
+Shard shard4ReplicaSet at shard4ReplicaSet/188.226.172.84:27018
+ data : 229.2MiB docs : 769448 chunks : 7
+ estimated data per chunk : 32.74MiB
+ estimated docs per chunk : 109921
+
+Totals
+ data : 733.9MiB docs : 2463941 chunks : 24
+ Shard shard1ReplicaSet contains 24.82% data, 24.82% docs in cluster, avg obj size on shard : 312B
+ Shard shard2ReplicaSet contains 25.14% data, 25.13% docs in cluster, avg obj size on shard : 312B
+ Shard shard3ReplicaSet contains 18.8% data, 18.8% docs in cluster, avg obj size on shard : 312B
+ Shard shard4ReplicaSet contains 31.23% data, 31.22% docs in cluster, avg obj size on shard : 312B
 
 
 

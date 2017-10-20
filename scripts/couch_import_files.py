@@ -9,7 +9,7 @@ from subprocess import call
 def getHelpText():
 	return "Usage: python XXX.py [dbname]"
 
-couchserver = couchdb.Server('http://127.0.0.1:5984/')
+couchserver = couchdb.Server('http://188.226.132.64:80/')
 
 # Input parameter parsing
 
@@ -34,7 +34,7 @@ else:
 for file in files:
 	print("Importing file: " + file)
 
-	call(["curl", "-X", "POST", "http://127.0.0.1:5984/" + dbname + "/_bulk_docs",
+	call(["curl", "--silent", "--output", "/dev/null", "-X", "POST", "http://188.226.132.64:80/" + dbname + "/_bulk_docs",
 		"-d", "@" + file, "-H", "Content-type: application/json"])
 
 

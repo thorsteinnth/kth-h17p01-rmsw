@@ -91,8 +91,8 @@ if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "worklo
 	print(getHelpText())
 	sys.exit(1)
 
-couchserver = couchdb.Server('http://admin:password1@188.226.132.64:80/')
-dbname = 'bench'
+couchserver = couchdb.Server('http://admin:password1@127.0.0.1:80/')
+dbname = 'benchbig'
 db = couchserver[dbname]
 
 # BENCHMARK TEST #1 - RANGE QUERY

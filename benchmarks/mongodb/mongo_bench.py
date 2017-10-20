@@ -55,7 +55,7 @@ def workloadInstance(params):
 	else:
 		result = workflowUpdateOp(db.rankings)
 		if (saveResult):
-			resultList.append([threadId, "update", str(result.raw_result)])
+			resultList.append([threadId, "update", str(result)])
 
 def workflowReadOp(rankings):
 	randomRank = random.randint(100,500)
@@ -64,15 +64,24 @@ def workflowReadOp(rankings):
 def workflowUpdateOp(rankings):
 	randomRank1 = random.randint(100,500)
 	randomRank2 = random.randint(100,500)
-	return rankings.update_one(
-		{ "pageRank" : randomRank1 },
-		{
-			"$set": {
-				"pageRank" : randomRank2
-			}
+	doc = rankings.find_one({ "pageRank" : randomRank1 })
+	if doc is not None:
+		doc["pageRank"] = randomRank2
+		db.rankings.save(doc)
+		return "updated"
+	else:
+		return "miss"
 
-		}
-	)
+	# Can't do an update operation on a sharded collection unless the query contains the shard key
+	# We are hash sharding on the object IDs, so we don't use this.	
+	#return rankings.update_one(
+	#	{ "pageRank" : randomRank1 },
+	#	{
+	#		"$set": {
+	#			"pageRank" : randomRank2
+	#		}
+	#	}
+	#)
 
 def aggregationPipelineSum(uservisits):
 	uservisits.aggregate([ { "$group": { "_id": "$visitDate", "value": { "$sum": "$duration" }}}, { "$sort" : { "_id" : 1 }} ])
@@ -147,8 +156,11 @@ if (benchmark == "workload"):
 		print("Operation results")
 		readOps = [t for t in opResults if t[1] == "read"]
 		updateOps = [t for t in opResults if t[1] == "update"]
-		print("Read operations: " + str(len(readOps)))
-		print("Update operations: " + str(len(updateOps)))
+		readOpsMissed = [t for t in readOps if t[2] == "None"]
+		updateOpsMissed = [t for t in updateOps if t[2] == "miss"]
+		updateOpsCompleted = [t for t in updateOps if t[2] == "updated"]
+		print("Read operations: " + str(len(readOps)) + " - Missed: " + str(len(readOpsMissed)))
+		print("Update operations: " + str(len(updateOps)) + " - Missed: " + str(len(updateOpsMissed)) + " - Completed: " + str(len(updateOpsCompleted)))
 	print("Workload simulation result")
 	pprint(workloadResults)
 

@@ -272,6 +272,7 @@ Shard a collection:
 WE DO THIS
 Here we shard the collection using hashed sharding on the document IDs:
 sh.shardCollection("some-db.rankings", { "_id" : "hashed" } )
+sh.shardCollection("some-db.uservisits", { "_id" : "hashed" } )
 
 Here we shard the rankings collection by the pageRank key, using ranged sharding in (I think) ascending order.
 (Note: When running this the collection gets created. Can't drop the collection when importing data from files).

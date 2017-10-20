@@ -13,7 +13,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 # Functions
 
 def getHelpText():
-	return "Usage: python XXX.py [benchmark (range/mapreduce/aggregation/workload)] [use authentication (true/false)]"
+	return "Usage: python XXX.py [host] [port] [benchmark (range/mapreduce/aggregation/workload)] [use authentication (true/false)]"
 
 def rangeQuery(rankings):
 	# SELECT pageURL, pageRank FROM rankings WHERE pageRank > X
@@ -81,12 +81,14 @@ def aggregationPipelineSum(uservisits):
 
 # Input parsing
 
-if len(sys.argv) != 3:
+if len(sys.argv) != 5:
     print(getHelpText())
     sys.exit(1)
 
-benchmark = str(sys.argv[1])
-useAuthentication = str(sys.argv[2]) == "true"
+host = str(sys.argv[1])
+port = int(sys.argv[2])
+benchmark = str(sys.argv[3])
+useAuthentication = str(sys.argv[4]) == "true"
 
 if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "workload" or benchmark == "aggregation"):
 	print(getHelpText())
@@ -99,7 +101,7 @@ username = "jsmith"
 password = "some-initial-password"
 authenticationDatabase = "admin"
 
-client = MongoClient('localhost', 32768)
+client = MongoClient(host, port)
 
 if useAuthentication:
 	authenticated = client['some-db'].authenticate(username, password, source=authenticationDatabase)

@@ -3,6 +3,8 @@ Set up docker machines on Digital Ocean, have to get the docker images first:
 
 docker pull mongo
 
+NOTE: Bailed on using docker, just using mongo droplets, see below
+
 ---------------------------------------------
 
 Will put the config server and mongos router on the same node
@@ -53,7 +55,7 @@ Shard servers
 
 Shard 1
 
-docker run --name shard1-mongo -p 27018:27018 -d mongo mongod --shardsvr --port 27018 --replSet shard1ReplicaSet
+docker run --name shard1-mongo -p 27018:27018 --add-host="127.0.0.1:37.139.13.120" -d mongo mongod --shardsvr --port 27018 --replSet shard1ReplicaSet
 
 docker exec -it shard1-mongo /bin/bash
 
@@ -127,6 +129,163 @@ sh.addShard("shard2ReplicaSet/95.85.27.21:27018")
 sh.addShard("shard3ReplicaSet/95.85.42.132:27018")
 
 sh.addShard("shard4ReplicaSet/188.226.135.141:27018")
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------------
+
+
+Mongo droplets, no docker
+
+Config server
+
+sudo ufw allow 27019
+
+mkdir /mongo-metadata
+mongod --configsvr --dbpath /mongo-metadata --port 27019 --replSet configServerReplicaSet
+
+Make second ssh connection
+
+mongo --port 27019
+rs.initiate({ _id: "configServerReplicaSet", configsvr: true, members: [ { _id : 0, host : "188.226.157.182:27019" } ] })
+rs.status()
+
+To reconfigure a replicaset:
+rs.reconfig({ _id: "configServerReplicaSet", configsvr: true, members: [ { _id : 0, host : "188.226.157.182:27019" } ] })
+
+---------------------------------------------
+
+mongos server (router)
+
+Find the mongod instance already using 27017 and kill it
+netstat -tulpn
+kill PID
+
+sudo ufw allow 27017
+
+mongos --port 27017 --configdb configServerReplicaSet/188.226.157.182:27019
+
+Make second ssh connection
+
+mongo --port 27017
+
+---------------------------------------------
+
+Shard servers
+
+Find the mongod instance already using 27017 and kill it
+netstat -tulpn
+kill PID
+
+----------------------
+
+Shard 1
+
+sudo ufw allow 27018
+
+mkdir /mongo-data
+
+mongod --shardsvr --dbpath /mongo-data --port 27018 --replSet shard1ReplicaSet
+
+Make new SSH connection
+
+mongo --port 27018
+
+rs.initiate({ _id : "shard1ReplicaSet", members: [ { _id : 0, host : "188.226.173.163:27018" } ]})
+
+rs.status()
+
+----------------------
+
+Shard 2
+
+sudo ufw allow 27018
+
+mkdir /mongo-data
+
+mongod --shardsvr --dbpath /mongo-data --port 27018 --replSet shard2ReplicaSet
+
+Make new SSH connection
+
+mongo --port 27018
+
+rs.initiate({ _id : "shard2ReplicaSet", members: [ { _id : 0, host : "188.226.171.167:27018" } ]})
+
+rs.status()
+
+----------------------
+
+Shard 3
+
+sudo ufw allow 27018
+
+mkdir /mongo-data
+
+mongod --shardsvr --dbpath /mongo-data --port 27018 --replSet shard3ReplicaSet
+
+Make new SSH connection
+
+mongo --port 27018
+
+rs.initiate({ _id : "shard3ReplicaSet", members: [ { _id : 0, host : "188.226.172.31:27018" } ]})
+
+rs.status()
+
+----------------------
+
+Shard 4
+
+sudo ufw allow 27018
+
+mkdir /mongo-data
+
+mongod --shardsvr --dbpath /mongo-data --port 27018 --replSet shard4ReplicaSet
+
+Make new SSH connection
+
+mongo --port 27018
+
+rs.initiate({ _id : "shard4ReplicaSet", members: [ { _id : 0, host : "188.226.172.84:27018" } ]})
+
+rs.status()
+
+---------------------------------------------
+
+Mongos configuration
+
+Add shards to the cluster:
+Do this for all shards, until the cluster includes all shards
+
+sh.addShard("shard1ReplicaSet/188.226.173.163:27018")
+sh.addShard("shard2ReplicaSet/188.226.171.167:27018")
+sh.addShard("shard3ReplicaSet/188.226.172.31:27018")
+sh.addShard("shard4ReplicaSet/188.226.172.84:27018")
+
+Enable sharding for the database:
+sh.enableSharding("some-db")
+
+Shard a collection:
+
+WE DO THIS
+Here we shard the collection using hashed sharding on the document IDs:
+sh.shardCollection("some-db.rankings", { "_id" : "hashed" } )
+
+Here we shard the rankings collection by the pageRank key, using ranged sharding in (I think) ascending order.
+(Note: When running this the collection gets created. Can't drop the collection when importing data from files).
+sh.shardCollection("some-db.rankings", { "pageRank" : 1 } )
+
+Here we shard the collection using hashed sharding on pageRank:
+sh.shardCollection("some-db.rankings", { "pageRank" : "hashed" } )
+
+
+
+
+
+
+
 
 
 

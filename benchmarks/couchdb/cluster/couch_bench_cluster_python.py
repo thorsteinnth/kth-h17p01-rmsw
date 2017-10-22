@@ -16,7 +16,7 @@ def getHelpText():
 	return "Usage: python XXX.py [benchmark (range/mapreduce/workload)]"
 
 def rangeQuery():
-	for row in db.view("_design/benchmarks/_view/pagerankcount", startkey=26):
+	for row in db.view("_design/benchmarks/_view/pagerank", startkey=26):
 		print(row)
 
 def mapReduceQuery():
@@ -52,7 +52,7 @@ def workloadInstance(params):
 def workflowReadOp():
 	randomRank = random.randint(100,500)
 	
-	viewResult = db.view("_design/benchmarks/_view/pagerank", key=randomRank, limit=1)
+	viewResult = db.view("_design/benchmarks/_view/pagerank", key=randomRank, reduce=False, limit=1)
 
 	if(len(viewResult.rows) > 0):
 		row = viewResult.rows[0]
@@ -65,7 +65,7 @@ def workflowUpdateOp():
 	randomRank1 = random.randint(100,500)
 	randomRank2 = random.randint(100,500)
 
-	viewResult = db.view("_design/benchmarks/_view/pagerank", key=randomRank1, limit=1)
+	viewResult = db.view("_design/benchmarks/_view/pagerank", key=randomRank1, reduce= False, limit=1)
 	
 	if(len(viewResult.rows) > 0):
 		row = viewResult.rows[0]
@@ -92,7 +92,7 @@ if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "worklo
 	sys.exit(1)
 
 couchserver = couchdb.Server('http://admin:password1@127.0.0.1:80/')
-dbname = 'benchbig'
+dbname = 'benchdb'
 db = couchserver[dbname]
 
 # BENCHMARK TEST #1 - RANGE QUERY

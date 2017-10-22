@@ -2,16 +2,9 @@
   "_id": "_design/benchmarks",
   "views": {
     "pagerank": {
-      "map": "function(doc) { if(doc.pageRank) { emit(doc.pageRank, null); } }"
-      },
-    "pagerankcount": {
       "map": "function(doc) { if(doc.pageRank) { emit(doc.pageRank, null); } }",
       "reduce": "_count"
       },
-    "uservisitscount": {
-      "map": "function(doc) { if(doc.visitDate) { emit(doc.visitDate, null); } }",
-      "reduce": "_count"
-    },
     "totalduration": {
       "map": "function(doc) { if(doc.visitDate) { emit(doc.visitDate, doc.duration); } }",
       "reduce": "_sum"

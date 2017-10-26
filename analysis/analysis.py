@@ -53,6 +53,17 @@ print("Mongo cluster workload - not indexed vs indexed")
 two_sided_ttest(mongo_cluster_workload, mongo_cluster_workload_indexed)
 print("")
 
+print("Mongo cluster range indexed - couch cluster range")
+two_sided_ttest(mongo_cluster_range_indexed, couch_cluster_range)
+print("")
+
+print("Mongo cluster aggregation indexed - couch cluster mapreduce")
+two_sided_ttest(mongo_cluster_aggregation_indexed, couch_cluster_mapreduce)
+print("")
+
+print("Mongo cluster workload indexed - couch cluster workload")
+two_sided_ttest(mongo_cluster_workload_indexed, couch_cluster_workload)
+print("")
 
 # Barchart
 

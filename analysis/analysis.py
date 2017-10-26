@@ -50,6 +50,8 @@ def two_sided_ttest(values_1, values_2):
 
 print("")
 
+# Mongo cluster index vs non index
+
 print("Mongo cluster range - not indexed vs indexed")
 two_sided_ttest(mongo_cluster_range, mongo_cluster_range_indexed)
 print("")
@@ -66,6 +68,8 @@ print("Mongo cluster workload - not indexed vs indexed")
 two_sided_ttest(mongo_cluster_workload, mongo_cluster_workload_indexed)
 print("")
 
+# Mongo vs Couch - cluster
+
 print("Mongo cluster range indexed - couch cluster range")
 two_sided_ttest(mongo_cluster_range_indexed, couch_cluster_range)
 print("")
@@ -78,7 +82,23 @@ print("Mongo cluster workload indexed - couch cluster workload")
 two_sided_ttest(mongo_cluster_workload_indexed, couch_cluster_workload)
 print("")
 
-# Barchart
+# Mongo vs Couch - local
+
+print("Mongo local range indexed - couch local range")
+two_sided_ttest(mongo_local_range_indexed, couch_local_range)
+print("")
+
+print("Mongo local aggregation indexed - couch local mapreduce")
+two_sided_ttest(mongo_local_aggregation_indexed, couch_local_mapreduce)
+print("")
+
+print("Mongo local workload indexed - couch local workload")
+two_sided_ttest(mongo_local_workload_indexed, couch_local_workload)
+print("")
+
+# Barcharts
+
+# Cluster
 
 # Range cluster - mongo indexed vs couch
 
@@ -122,7 +142,7 @@ ax.set_ylabel('Seconds')
 ax.set_title('Aggregation benchmark - cluster')
 f.show()
 
-# Workload benchmark
+# Workload benchmark cluster
 
 N = 2
 x = np.arange(N)
@@ -136,6 +156,63 @@ ax.set_ylabel('Seconds')
 ax.set_title('Workload benchmark - cluster')
 f.show()
 
+# Local
+
+# Range local - mongo indexed vs couch
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_range_indexed)*1000, mean(couch_local_range)*1000]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
+ax.set_ylabel('Milliseconds')
+ax.set_title('Range benchmark - local')
+f.show()
+
+# MapReduce and aggregate local - mongo indexed map reduce vs mongo indexed aggregate
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_mapreduce_indexed), mean(mongo_local_aggregation_indexed)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MapReduce', 'Aggregation framework'])
+ax.set_ylabel('Seconds')
+ax.set_title('MongoDB aggregation - local')
+f.show()
+
+# Mongo aggregation and couchdb mapreduce local
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_aggregation_indexed), mean(couch_local_mapreduce)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed - Aggregation', 'CouchDB - MapReduce'])
+ax.set_ylabel('Seconds')
+ax.set_title('Aggregation benchmark - local')
+f.show()
+
+# Workload benchmark local
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_workload_indexed), mean(couch_local_workload)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
+ax.set_ylabel('Seconds')
+ax.set_title('Workload benchmark - local')
+f.show()
 
 # Show plots
 plt.show()

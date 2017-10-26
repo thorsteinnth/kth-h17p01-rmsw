@@ -91,7 +91,7 @@ if not (benchmark == "range" or benchmark == "mapreduce" or benchmark == "worklo
 	print(getHelpText())
 	sys.exit(1)
 
-couchserver = couchdb.Server('http://admin:password1@127.0.0.1:80/')
+couchserver = couchdb.Server('http://127.0.0.1:5984/')
 dbname = 'benchdb'
 db = couchserver[dbname]
 

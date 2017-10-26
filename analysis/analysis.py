@@ -84,6 +84,35 @@ ax.set_ylabel('Seconds')
 ax.set_title('MongoDB aggregation - cluster')
 f.show()
 
+# Mongo aggregation and couchdb mapreduce cluster
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_cluster_aggregation_indexed), mean(couch_cluster_mapreduce)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed - Aggregation', 'CouchDB - MapReduce'])
+ax.set_ylabel('Seconds')
+ax.set_title('Aggregation benchmark - cluster')
+f.show()
+
+# Workload benchmark
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_cluster_workload_indexed), mean(couch_cluster_workload)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
+ax.set_ylabel('Seconds')
+ax.set_title('Workload benchmark - cluster')
+f.show()
+
+
 # Show plots
 plt.show()
 sys.exit(0)

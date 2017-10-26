@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.stats import ttest_ind
 from numpy import mean
 
@@ -15,6 +16,10 @@ mongo_cluster_mapreduce_indexed = [961.7279920578003,1113.6034150123596,1048.082
 mongo_cluster_aggregation_indexed = [123.98098516464233,109.95539498329163,123.33184385299683,119.20797681808472,117.25105094909668,126.40408515930176,120.38669800758362,107.85638308525085,120.82602596282959,121.9907579421997]
 mongo_cluster_workload_indexed = [0.5037438869476318,0.46160197257995605,0.5094461441040039,0.4451479911804199,0.5410511493682861,0.4662001132965088,0.5513091087341309,0.5034191608428955,0.5136399269104004,0.5340790748596191]
 
+couch_cluster_range = [0.05099081993103027,0.01820516586303711,0.024192094802856445,0.024460792541503906,0.027560949325561523,0.02137899398803711,0.03088212013244629,0.031225919723510742,0.03730416297912598,0.026895999908447266]
+couch_cluster_mapreduce = [85.71805691719055,63.585816860198975,63.444742918014526,63.490386962890625,57.55432605743408,59.880393981933594,52.723257064819336,54.8951690196991,55.33956813812256,60.97784090042114]
+couch_cluster_workload = [2.7237250804901123,3.2064437866210938,4.070245981216431,2.7459540367126465,2.644986152648926,2.959406852722168,2.76987886428833,3.4383649826049805,3.506753921508789,3.289702892303467]
+
 # Functions
 
 alpha = 0.01
@@ -26,6 +31,7 @@ def two_sided_ttest(values_1, values_2):
 	reject_null_hypothesis = p < alpha
 	print("t = %g  p = %g" % (t, p))
 	print("Reject null hypothesis: " + str(reject_null_hypothesis))
+
 
 # Main
 
@@ -47,11 +53,80 @@ print("Mongo cluster workload - not indexed vs indexed")
 two_sided_ttest(mongo_cluster_workload, mongo_cluster_workload_indexed)
 print("")
 
+
+# Barchart
+
+# Range cluster - mongo indexed vs couch
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_cluster_range_indexed)*1000, mean(couch_cluster_range)*1000]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
+ax.set_ylabel('Milliseconds')
+ax.set_title('Range benchmark - cluster')
+f.show()
+
+# MapReduce and aggregate cluster - mongo indexed map reduce vs mongo indexed aggregate
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_cluster_mapreduce_indexed), mean(mongo_cluster_aggregation_indexed)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MapReduce', 'Aggregation framework'])
+ax.set_ylabel('Seconds')
+ax.set_title('MongoDB aggregation - cluster')
+f.show()
+
+# Show plots
+plt.show()
 sys.exit(0)
 
+# BARCHART WITH ERROR BARS STUFF
 
+#width = 0.35       # the width of the bars
 
+#men_std = (2, 3, 4, 1, 2)
+#women_std = (3, 5, 2, 3, 3)
 
+#fig, ax = plt.subplots()
+#rects1 = ax.bar(x, y, width, color='b', align='center')#, yerr=men_std)
+#rects2 = ax.bar(ind, couch_means, width, color='y')#, yerr=women_std)
+
+# add some text for labels, title and axes ticks
+#ax.set_ylabel('Seconds')
+#ax.set_xlabel('Range benchmark')
+#ax.set_title('Benchmark results')
+#ax.set_xticks(np.arange(2))
+#ax.set_xticklabels(('MongoDB', 'CouchDB'))
+
+#ax.legend((rects1[0], rects2[0]), ('MongoDB indexed', 'CouchDB'))
+
+#def autolabel(rects):
+ #   """
+ #   Attach a text label above each bar displaying its height
+ #   """
+#    for rect in rects:
+ #       height = rect.get_height()
+  #      ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+   #             '%d' % int(height),
+    #            ha='center', va='bottom')
+
+#autolabel(rects1)
+#autolabel(rects2)
+
+#plt.tick_params(
+#    axis='x',          # changes apply to the x-axis
+#    which='both',      # both major and minor ticks are affected
+#    bottom='off',      # ticks along the bottom edge are off
+#    top='off',         # ticks along the top edge are off
+#    labelbottom='off') # labels along the bottom edge are off
 
 
 # OLD STUFF

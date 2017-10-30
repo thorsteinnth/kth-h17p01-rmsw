@@ -1,6 +1,9 @@
 
 YCSB notes
 
+https://github.com/brianfrankcooper/YCSB/wiki/Core-Properties
+https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
+
 --------------------------------------------------------------------------------------------------------------------------------
 
 Mongo DB:
@@ -11,7 +14,16 @@ sh.shardCollection("ycsb.test", { "_id" : "hashed" } )
 --------------------------------------------------------------------------------------------------------------------------------
 
 Commands:
+
+Load:
 ./bin/ycsb load mongodb-async -s -P workloads/workloada_mongocouch -p mongodb.url=mongodb://localhost:27017/ycsb > ycsb_load_output.txt
+
+Run:
+
+No op/sec limit
+./bin/ycsb run mongodb-async -s -P workloads/workloada_mongocouch -p mongodb.url=mongodb://localhost:27017/ycsb -threads 200 -s > ycsb_run_output.txt
+
+./bin/ycsb run mongodb-async -s -P workloads/workloada_mongocouch -p mongodb.url=mongodb://localhost:27017/ycsb -threads 10 -target 100 -s > ycsb_run_output.txt
 
 --------------------------------------------------------------------------------------------------------------------------------
 

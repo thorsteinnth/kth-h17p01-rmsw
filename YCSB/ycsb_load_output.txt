@@ -1,26 +1,3 @@
-
-YCSB notes
-
---------------------------------------------------------------------------------------------------------------------------------
-
-Mongo DB:
-Set up sharding
-sh.enableSharding("ycsb")
-sh.shardCollection("ycsb.test", { "_id" : "hashed" } )
-
---------------------------------------------------------------------------------------------------------------------------------
-
-Commands:
-./bin/ycsb load mongodb-async -s -P workloads/workloada_mongocouch -p mongodb.url=mongodb://localhost:27017/ycsb > ycsb_load_output.txt
-
---------------------------------------------------------------------------------------------------------------------------------
-
-Load phase
-
-We run the load phase with the default number of threads and no bound on operations per second. Let's just see how fast they can load, and show the results in ops/sec in a barchart.
-
-Load output
-
 mongo connection created with mongodb://localhost:27017/ycsb
 [OVERALL], RunTime(ms), 48783.0
 [OVERALL], Throughput(ops/sec), 2049.8944304368324
@@ -46,4 +23,3 @@ mongo connection created with mongodb://localhost:27017/ycsb
 [INSERT], 95thPercentileLatency(us), 617.0
 [INSERT], 99thPercentileLatency(us), 791.0
 [INSERT], Return=OK, 100000
-

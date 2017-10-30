@@ -1,0 +1,4 @@
+
+YCSB notes
+
+./bin/ycsb load mongodb-async -s -P workloads/workloada_mongocouch -p mongodb.url=mongodb://localhost:27017/ycsb

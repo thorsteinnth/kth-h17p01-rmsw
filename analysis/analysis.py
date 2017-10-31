@@ -106,6 +106,46 @@ print("Mongo local workload indexed - couch local workload")
 two_sided_ttest(mongo_local_workload_indexed, couch_local_workload)
 print("")
 
+# Mongo small dataset - local vs cluster
+
+# No indexes
+
+print("Mongo local small dataset no index range - mongo cluster small dataset no index range")
+two_sided_ttest(mongo_local_range, mongo_cluster_localdata_range)
+print("")
+
+print("Mongo local small dataset no index mapreduce - mongo cluster small dataset no index mapreduce")
+two_sided_ttest(mongo_local_mapreduce, mongo_cluster_localdata_mapreduce)
+print("")
+
+print("Mongo local small dataset no index aggregation - mongo cluster small dataset no index aggregation")
+two_sided_ttest(mongo_local_aggregation, mongo_cluster_localdata_aggregation)
+print("")
+
+print("Mongo local small dataset no index workload - mongo cluster small dataset no index workload")
+two_sided_ttest(mongo_local_workload, mongo_cluster_localdata_workload)
+print("")
+
+# With indexes
+
+print("Mongo local small dataset indexed range - mongo cluster small dataset indexed range")
+two_sided_ttest(mongo_local_range_indexed, mongo_cluster_localdata_range_indexed)
+print("")
+
+print("Mongo local small dataset indexed mapreduce - mongo cluster small dataset indexed mapreduce")
+two_sided_ttest(mongo_local_mapreduce_indexed, mongo_cluster_localdata_mapreduce_indexed)
+print("")
+
+print("Mongo local small dataset indexed aggregation - mongo cluster small dataset indexed aggregation")
+two_sided_ttest(mongo_local_aggregation_indexed, mongo_cluster_localdata_aggregation_indexed)
+print("")
+
+print("Mongo local small dataset indexed workload - mongo cluster small dataset indexed workload")
+two_sided_ttest(mongo_local_workload_indexed, mongo_cluster_localdata_workload_indexed)
+print("")
+
+################################################################################################################
+
 # Barcharts
 
 # Cluster

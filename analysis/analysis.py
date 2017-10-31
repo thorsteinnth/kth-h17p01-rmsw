@@ -140,6 +140,24 @@ print("Mongo cluster workload - not indexed vs indexed")
 two_sided_ttest(mongo_cluster_workload, mongo_cluster_workload_indexed)
 print("")
 
+# Mongo local index vs non index
+
+print("Mongo local range - not indexed vs indexed")
+two_sided_ttest(mongo_local_range, mongo_local_range_indexed)
+print("")
+
+print("Mongo local mapreduce - not indexed vs indexed")
+two_sided_ttest(mongo_local_mapreduce, mongo_local_mapreduce_indexed)
+print("")
+
+print("Mongo local aggregation - not indexed vs indexed")
+two_sided_ttest(mongo_local_aggregation, mongo_local_aggregation_indexed)
+print("")
+
+print("Mongo local workload - not indexed vs indexed")
+two_sided_ttest(mongo_local_workload, mongo_local_workload_indexed)
+print("")
+
 # Mongo vs Couch - cluster
 
 print("Mongo cluster range indexed - couch cluster range")

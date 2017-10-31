@@ -58,6 +58,68 @@ def two_sided_ttest(values_1, values_2):
 
 # Main
 
+# Means
+
+print("")
+print("Means:")
+print("")
+
+print("mongo_cluster_range: " + str(mean(mongo_cluster_range)))
+print("mongo_cluster_mapreduce: " + str(mean(mongo_cluster_mapreduce)))
+print("mongo_cluster_aggregation: " + str(mean(mongo_cluster_aggregation)))
+print("mongo_cluster_workload: " + str(mean(mongo_cluster_workload)))
+
+print("")
+
+print("mongo_cluster_range_indexed: " + str(mean(mongo_cluster_range_indexed)))
+print("mongo_cluster_mapreduce_indexed: " + str(mean(mongo_cluster_mapreduce_indexed)))
+print("mongo_cluster_aggregation_indexed: " + str(mean(mongo_cluster_aggregation_indexed)))
+print("mongo_cluster_workload_indexed: " + str(mean(mongo_cluster_workload_indexed)))
+
+print("")
+
+print("mongo_local_range: " + str(mean(mongo_local_range)))
+print("mongo_local_mapreduce: " + str(mean(mongo_local_mapreduce)))
+print("mongo_local_aggregation: " + str(mean(mongo_local_aggregation)))
+print("mongo_local_workload: " + str(mean(mongo_local_workload)))
+
+print("")
+
+print("mongo_local_range_indexed: " + str(mean(mongo_local_range_indexed)))
+print("mongo_local_mapreduce_indexed: " + str(mean(mongo_local_mapreduce_indexed)))
+print("mongo_local_aggregation_indexed: " + str(mean(mongo_local_aggregation_indexed)))
+print("mongo_local_workload_indexed: " + str(mean(mongo_local_workload_indexed)))
+
+print("")
+
+print("mongo_cluster_localdata_range: " + str(mean(mongo_cluster_localdata_range)))
+print("mongo_cluster_localdata_mapreduce: " + str(mean(mongo_cluster_localdata_mapreduce)))
+print("mongo_cluster_localdata_aggregation: " + str(mean(mongo_cluster_localdata_aggregation)))
+print("mongo_cluster_localdata_workload: " + str(mean(mongo_cluster_localdata_workload)))
+
+print("")
+
+print("mongo_cluster_localdata_range_indexed: " + str(mean(mongo_cluster_localdata_range_indexed)))
+print("mongo_cluster_localdata_mapreduce_indexed: " + str(mean(mongo_cluster_localdata_mapreduce_indexed)))
+print("mongo_cluster_localdata_aggregation_indexed: " + str(mean(mongo_cluster_localdata_aggregation_indexed)))
+print("mongo_cluster_localdata_workload_indexed: " + str(mean(mongo_cluster_localdata_workload_indexed)))
+
+print("")
+
+print("couch_cluster_range: " + str(mean(couch_cluster_range)))
+print("couch_cluster_mapreduce: " + str(mean(couch_cluster_mapreduce)))
+print("couch_cluster_workload: " + str(mean(couch_cluster_workload)))
+
+print("")
+
+print("couch_local_range: " + str(mean(couch_local_range)))
+print("couch_local_mapreduce: " + str(mean(couch_local_mapreduce)))
+print("couch_local_workload: " + str(mean(couch_local_workload)))
+
+# ttests
+
+print("")
+print("ttests:")
 print("")
 
 # Mongo cluster index vs non index

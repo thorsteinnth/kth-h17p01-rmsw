@@ -206,6 +206,8 @@ ax.set_ylabel('Seconds')
 ax.set_title('Workload benchmark - cluster')
 f.show()
 
+######################################################
+
 # Local
 
 # Range local - mongo indexed vs couch
@@ -263,6 +265,66 @@ ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
 ax.set_ylabel('Seconds')
 ax.set_title('Workload benchmark - local')
 f.show()
+
+######################################################
+
+# Mongo local small dataset no index mapreduce - mongo cluster small dataset no index mapreduce
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_mapreduce), mean(mongo_cluster_localdata_mapreduce)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['mongo_local_mapreduce', 'mongo_cluster_localdata_mapreduce'])
+ax.set_ylabel('Seconds')
+ax.set_title('Mongo local small dataset no index mapreduce - mongo cluster small dataset no index mapreduce')
+f.show()
+
+# Mongo local small dataset no index aggregation - mongo cluster small dataset no index aggregation
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_aggregation), mean(mongo_cluster_localdata_aggregation)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['mongo_local_aggregation', 'mongo_cluster_localdata_aggregation'])
+ax.set_ylabel('Seconds')
+ax.set_title('Mongo local small dataset no index aggregation - mongo cluster small dataset no index aggregation')
+f.show()
+
+# Mongo local small dataset indexed mapreduce - mongo cluster small dataset indexed mapreduce
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_mapreduce_indexed), mean(mongo_cluster_localdata_mapreduce_indexed)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['mongo_local_mapreduce_indexed', 'mongo_cluster_localdata_mapreduce_indexed'])
+ax.set_ylabel('Seconds')
+ax.set_title('Mongo local small dataset indexed mapreduce - mongo cluster small dataset indexed mapreduce')
+f.show()
+
+# Mongo local small dataset indexed aggregation - mongo cluster small dataset indexed aggregation
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_aggregation_indexed), mean(mongo_cluster_localdata_aggregation_indexed)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['mongo_local_aggregation_indexed', 'mongo_cluster_localdata_aggregation_indexed'])
+ax.set_ylabel('Seconds')
+ax.set_title('Mongo local small dataset indexed aggregation - mongo cluster small dataset indexed aggregation')
+f.show()
+
+######################################################
 
 # Show plots
 plt.show()

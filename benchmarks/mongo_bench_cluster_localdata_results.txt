@@ -1,0 +1,238 @@
+
+Running benchmarks on the local data (part files 99, 98, 97, 96) in the cluster
+
+Allt keyrt á:
+4 GB Memory / 60 GB Disk / AMS2
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+Import
+
+use some-db
+sh.enableSharding("some-db")
+sh.shardCollection("some-db.rankings", { "_id" : "hashed" } )
+sh.shardCollection("some-db.uservisits", { "_id" : "hashed" } )
+
+mongos> db.rankings.find().count()
+3600000
+
+Totals
+ data : 418.84MiB docs : 3600000 chunks : 45
+ Shard shard1ReplicaSet contains 25.25% data, 25.25% docs in cluster, avg obj size on shard : 122B
+ Shard shard2ReplicaSet contains 25.29% data, 25.3% docs in cluster, avg obj size on shard : 121B
+ Shard shard3ReplicaSet contains 19.81% data, 19.81% docs in cluster, avg obj size on shard : 122B
+ Shard shard4ReplicaSet contains 29.63% data, 29.63% docs in cluster, avg obj size on shard : 121B
+
+mongos> db.uservisits.find().count()
+2463941
+
+Totals
+ data : 733.9MiB docs : 2463941 chunks : 24
+ Shard shard1ReplicaSet contains 18.52% data, 18.52% docs in cluster, avg obj size on shard : 312B
+ Shard shard2ReplicaSet contains 31.41% data, 31.41% docs in cluster, avg obj size on shard : 312B
+ Shard shard3ReplicaSet contains 30.97% data, 30.97% docs in cluster, avg obj size on shard : 312B
+ Shard shard4ReplicaSet contains 19.08% data, 19.08% docs in cluster, avg obj size on shard : 312B
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+No indexes (other than shard key)
+
+mongos> db.rankings.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "some-db.rankings"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : "hashed"
+		},
+		"name" : "_id_hashed",
+		"ns" : "some-db.rankings"
+	}
+]
+
+mongos> db.uservisits.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "some-db.uservisits"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : "hashed"
+		},
+		"name" : "_id_hashed",
+		"ns" : "some-db.uservisits"
+	}
+]
+
+Range query result:
+[2.8332149982452393,
+ 1.4705231189727783,
+ 1.3333380222320557,
+ 1.213766098022461,
+ 1.2293219566345215,
+ 1.496021032333374,
+ 1.4046120643615723,
+ 0.7422230243682861,
+ 0.8181638717651367,
+ 1.0062329769134521]
+
+ MapReduce query result:
+[52.49125003814697,
+ 50.114948987960815,
+ 52.00499606132507,
+ 46.44380593299866,
+ 51.28500294685364,
+ 55.4791738986969,
+ 56.116825103759766,
+ 48.45055794715881,
+ 52.50936007499695,
+ 53.981181144714355]
+
+ Aggregation pipeline query result:
+[5.715880870819092,
+ 3.831818103790283,
+ 4.767574071884155,
+ 3.8426730632781982,
+ 4.142683982849121,
+ 4.350819110870361,
+ 3.98563289642334,
+ 4.648981094360352,
+ 4.316348075866699,
+ 4.242316961288452]
+
+ Workload simulation result
+[12.574432134628296,
+ 11.314028978347778,
+ 10.992658138275146,
+ 12.28822112083435,
+ 13.561232089996338,
+ 8.747842073440552,
+ 10.051737070083618,
+ 14.539752006530762,
+ 13.728435039520264,
+ 14.458688974380493]
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+With indexes
+
+use some-db
+db.rankings.createIndex( { "pageRank": 1 } )
+db.uservisits.createIndex( { "visitDate": 1 } )
+
+mongos> db.rankings.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "some-db.rankings"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : "hashed"
+		},
+		"name" : "_id_hashed",
+		"ns" : "some-db.rankings"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"pageRank" : 1
+		},
+		"name" : "pageRank_1",
+		"ns" : "some-db.rankings"
+	}
+]
+
+mongos> db.uservisits.getIndexes()
+[
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : 1
+		},
+		"name" : "_id_",
+		"ns" : "some-db.uservisits"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"_id" : "hashed"
+		},
+		"name" : "_id_hashed",
+		"ns" : "some-db.uservisits"
+	},
+	{
+		"v" : 2,
+		"key" : {
+			"visitDate" : 1
+		},
+		"name" : "visitDate_1",
+		"ns" : "some-db.uservisits"
+	}
+]
+
+Range query result:
+[0.01778697967529297,
+ 0.001847982406616211,
+ 0.001435995101928711,
+ 0.0020818710327148438,
+ 0.0014100074768066406,
+ 0.0015718936920166016,
+ 0.0015048980712890625,
+ 0.002446889877319336,
+ 0.002427816390991211,
+ 0.0015380382537841797]
+
+ MapReduce query result:
+[51.546287059783936,
+ 59.211113929748535,
+ 50.90581703186035,
+ 50.03851795196533,
+ 50.55675005912781,
+ 49.3104350566864,
+ 48.023561000823975,
+ 47.95290994644165,
+ 49.222989082336426,
+ 53.24532604217529]
+
+ Aggregation pipeline query result:
+[4.907524108886719,
+ 5.029561996459961,
+ 5.437265872955322,
+ 4.691232919692993,
+ 4.902064800262451,
+ 4.3758649826049805,
+ 4.067636013031006,
+ 4.062564134597778,
+ 4.48317813873291,
+ 4.2954771518707275]
+
+ Workload simulation result
+[0.5553920269012451,
+ 0.45089221000671387,
+ 0.42414402961730957,
+ 0.41779208183288574,
+ 0.5450570583343506,
+ 0.4972989559173584,
+ 0.4308958053588867,
+ 0.5090899467468262,
+ 0.47669410705566406,
+ 0.4585897922515869]

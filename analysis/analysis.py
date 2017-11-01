@@ -164,6 +164,10 @@ print("Mongo cluster range indexed - couch cluster range")
 two_sided_ttest(mongo_cluster_range_indexed, couch_cluster_range)
 print("")
 
+print("Mongo cluster aggregation non-indexed - couch cluster mapreduce")
+two_sided_ttest(mongo_cluster_aggregation, couch_cluster_mapreduce)
+print("")
+
 print("Mongo cluster aggregation indexed - couch cluster mapreduce")
 two_sided_ttest(mongo_cluster_aggregation_indexed, couch_cluster_mapreduce)
 print("")
@@ -258,6 +262,20 @@ ax.set_ylabel('Seconds')
 ax.set_title('MongoDB aggregation - cluster')
 f.show()
 
+# Mongo mapreduce and couchdb mapreduce cluster
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_cluster_mapreduce_indexed), mean(couch_cluster_mapreduce)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
+ax.set_ylabel('Seconds')
+ax.set_title('MapReduce benchmark - cluster')
+f.show()
+
 # Mongo aggregation and couchdb mapreduce cluster
 
 N = 2
@@ -330,6 +348,20 @@ ax.set_xticks(x)
 ax.set_xticklabels(['MongoDB indexed - Aggregation', 'CouchDB - MapReduce'])
 ax.set_ylabel('Seconds')
 ax.set_title('Aggregation benchmark - local')
+f.show()
+
+# Mongo mapreduce and couchdb mapreduce local
+
+N = 2
+x = np.arange(N)
+y = [mean(mongo_local_mapreduce_indexed), mean(couch_local_mapreduce)]
+f = plt.figure()
+ax = f.add_axes([0.2, 0.15, 0.65, 0.65])
+ax.bar(x, y, align='center')
+ax.set_xticks(x)
+ax.set_xticklabels(['MongoDB indexed', 'CouchDB'])
+ax.set_ylabel('Seconds')
+ax.set_title('MapReduce benchmark - local')
 f.show()
 
 # Workload benchmark local
